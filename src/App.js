@@ -1,23 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import Todo from "./Todo";
+import AddTodo from "./AddTodo";
+import Header from "./Header";
 
 function App() {
+  const [newTodo, setNewTodo] = useState(
+    JSON.parse(localStorage.getItem("shoppinglist")) || []
+  );
+  const [newTask, setNewTask] = useState("");
+
+  const setAndSaveItems = (newItems) => {
+    setNewTodo(newItems);
+    localStorage.setItem("shoppinglist", JSON.stringify(newItems));
+  };
+
+  const addTask = (task) => {
+    const id = newTodo.length ? newTodo[newTodo.length - 1].id + 1 : 1;
+    const myNewTodo = { id, task };
+    const listTodos = [...newTodo, myNewTodo];
+    console.log(listTodos);
+    // setNewTodo(listTodos);
+    setAndSaveItems(listTodos);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!newTask) return;
+    addTask(newTask);
+    setNewTask("");
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header title=" Add Todo " />
+      <AddTodo
+        newTask={newTask}
+        setNewTask={setNewTask}
+        handleSubmit={handleSubmit}
+      />
+      <Todo newTodo={newTodo} />
     </div>
   );
 }
